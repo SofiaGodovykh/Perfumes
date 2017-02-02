@@ -219,3 +219,23 @@ def get_time_to_wear(perfume, ratio = 0.5):
         else:
             return 0
     return -1
+
+def get_temperature(perfume, ratio = 0.5):
+    """
+    :param perfume: mongodb perfume
+    :param ratio: the minimum value of min(day/night, night/day)/max(day/night, night/day) to measure the difference
+    :return: 0 night, 1 day, -1 both or unknown
+    """
+    hot = perfume['hot']
+    cold = perfume['cold']
+    if hot * cold != 0 and (1.0 * hot / cold <= ratio or 1.0 * cold / hot <= ratio):
+        if hot > cold:
+            return 1
+        else:
+            return 0
+    if hot * cold == 0:
+        if hot > cold:
+            return 1
+        else:
+            return 0
+    return -1
