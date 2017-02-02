@@ -224,7 +224,7 @@ def get_temperature(perfume, ratio = 0.5):
     """
     :param perfume: mongodb perfume
     :param ratio: the minimum value of min(day/night, night/day)/max(day/night, night/day) to measure the difference
-    :return: 0 night, 1 day, -1 both or unknown
+    :return: 0 cold, 1 warm, -1 both or unknown
     """
     hot = perfume['hot']
     cold = perfume['cold']
@@ -238,4 +238,31 @@ def get_temperature(perfume, ratio = 0.5):
             return 1
         else:
             return 0
+    return -1
+
+def get_season(perfume, ratio = 0.5):
+    """
+    :param perfume: mongodb perfume
+    :param ratio: the minimum value of min(day/night, night/day)/max(day/night, night/day) to measure the difference
+    :return: 0 winter, 1 spring, 2 summer, 3 fall, -1 multiple or unknown
+    """
+    winter = perfume['winter']
+    spring = perfume['spring']
+    summer = perfume['summer']
+    fall = perfume['fall']
+
+    seasons = ['winter', 'spring', 'summer', 'fall']
+    values = [winter, spring, summer, fall]
+    sorted_values = sorted(zip(values, seasons))
+    if sorted_values[3][0] == 0:
+        return -1
+    if sorted_values[2][0]/sorted_values[3][0] <= ratio:
+        if sorted_values[3][1] == 'winter':
+            return 0
+        if sorted_values[3][1] == 'spring':
+            return 1
+        if sorted_values[3][1] == 'summer':
+            return 2
+        if sorted_values[3][1] == 'fall':
+            return 3
     return -1
