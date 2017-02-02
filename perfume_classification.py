@@ -199,3 +199,23 @@ def print_top(clf, labels, n):
     top = zip(coefs[:n], coefs[:-(n + 1):-1])
     for (coef_1, fn_1), (coef_2, fn_2) in top:
         print "\t%.4f\t%-15s\t\t%.4f\t%-15s" % (coef_1, fn_1, coef_2, fn_2)
+
+def get_time_to_wear(perfume, ratio = 0.5):
+    """
+    :param perfume: mongodb perfume
+    :param ratio: the minimum value of min(day/night, night/day)/max(day/night, night/day) to measure the difference
+    :return: 0 night, 1 day, -1 both or unknown
+    """
+    day = perfume['day']
+    night = perfume['night']
+    if day * night != 0 and (1.0 * day / night <= ratio or 1.0 * night / day <= ratio):
+        if day > night:
+            return 1
+        else:
+            return 0
+    if day * night == 0:
+        if day > night:
+            return 1
+        else:
+            return 0
+    return -1
