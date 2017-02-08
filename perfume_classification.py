@@ -240,7 +240,7 @@ def get_temperature(perfume, ratio = 0.5):
             return 0
     return -1
 
-def get_season(perfume, ratio = 0.5):
+def get_season(perfume, ratio = 0.25):
     """
     :param perfume: mongodb perfume
     :param ratio: the minimum value of min(day/night, night/day)/max(day/night, night/day) to measure the difference
@@ -264,5 +264,32 @@ def get_season(perfume, ratio = 0.5):
         if sorted_values[3][1] == 'summer':
             return 2
         if sorted_values[3][1] == 'fall':
+            return 3
+    return -1
+
+def get_sillage(perfume, ratio = 0.5):
+    """
+    :param perfume: mongodb perfume
+    :param ratio: the minimum value of min(day/night, night/day)/max(day/night, night/day) to measure the difference
+    :return: 0 soft, 1 moderate, 2 heavy, 3 enormous, -1 multiple or unknown
+    """
+    soft = perfume['sillage'][0]['value']
+    moderate = perfume['sillage'][1]['value']
+    heavy = perfume['sillage'][2]['value']
+    enormous = perfume['sillage'][3]['value']
+
+    sillage = ['soft', 'moderate', 'heavy', 'enormous']
+    values = [soft, moderate, heavy, enormous]
+    sorted_values = sorted(zip(values, sillage))
+    if sorted_values[3][0] == 0:
+        return -1
+    if sorted_values[2][0]/sorted_values[3][0] <= ratio:
+        if sorted_values[3][1] == 'soft':
+            return 0
+        if sorted_values[3][1] == 'moderate':
+            return 1
+        if sorted_values[3][1] == 'heavy':
+            return 2
+        if sorted_values[3][1] == 'enormous':
             return 3
     return -1
